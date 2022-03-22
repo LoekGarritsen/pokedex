@@ -1,0 +1,313 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+body {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    background-image: url("../img/background.png");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+.btn {
+    font-size: 10px;
+}
+
+#pokedex-app {
+    margin: auto;
+    width: 100%;
+}
+
+.pokemon {
+    border: 1px solid black;
+    margin: 3px;
+    border-radius: 5px;
+    cursor: pointer;
+    height: 150px;
+    width: 150px;
+    text-align: center;
+}
+
+#pokedex {
+    margin: 50px 0px;
+}
+
+#table-stats {
+    border-collapse: separate;
+    border-spacing: 0 1em;
+}
+
+.tr-stat {
+    border-radius: 10px;
+    background-color: #DFDFDF;
+    padding: 0.5em;
+}
+
+.td-stat {
+    padding: 5px;
+}
+
+#browser {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px;
+}
+
+#quote {
+    width: 350px;
+    background-color: lightgreen;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.modal-dialog {
+    width: 70%;
+    max-width: 70%;
+    margin: 30px auto;
+}
+
+.pokemon-image-pokedex {
+    width: 100px;
+    margin: 20px
+}
+
+.pokemon-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.info-card {
+    border-radius: 5px;
+    background-color: #FF7F7F;
+    height: 400px;
+    padding: 10px;
+    margin: 10px;
+}
+
+.filter-button {
+    margin: 30px 50px;
+}
+
+.scroll-y {
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.filter-title:hover {
+    color: black;
+    cursor: pointer;
+}
+
+.stat {
+    height: 17px;
+}
+
+.pokemon-content {
+    display: flex;
+    justify-content: center;
+}
+
+.type {
+    padding: 0.5em;
+    height: 24px;
+    margin: 0.5em;
+}
+
+#types {
+    margin: auto;
+}
+
+#pokemon-card {
+    width: 200px;
+    max-width: 200px;
+    border-radius: 5px;
+    border: 1px solid black;
+    background-color: #DFDFDF;
+    text-align: center;
+    padding: 0.5em;
+    margin: 0.5em auto;
+}
+
+.img-browser {
+    width: 50px;
+}
+
+#pokemon-nav {
+    background-color: #DFDFDF;
+}
+
+
+/* stats */
+
+.stat-Hp {
+    background-color: red;
+}
+
+.stat-Attack {
+    background-color: orange;
+}
+
+.stat-Defense {
+    background-color: yellow;
+}
+
+.stat-Sp\.attack {
+    background-color: blue;
+}
+
+.stat-Sp\.defense {
+    background-color: green;
+}
+
+.stat-Speed {
+    background-color: pink;
+}
+
+#modal-normal {
+    background-color: #A8A77A;
+}
+
+#modal-fire {
+    background-color: #EE8130;
+}
+
+#modal-water {
+    background-color: #6390F0;
+}
+
+#modal-grass {
+    background-color: #9ed180;
+}
+
+#modal-flying {
+    background-color: #A98FF3;
+}
+
+#modal-fighting {
+    background-color: #C22E28;
+}
+
+#modal-poison {
+    background-color: #A33EA1;
+}
+
+#modal-electric {
+    background-color: #F7D02C;
+}
+
+#modal-ground {
+    background-color: #E2BF65;
+}
+
+#modal-rock {
+    background-color: #B6A136;
+}
+
+#modal-psychic {
+    background-color: #F95587;
+}
+
+#modal-ice {
+    background-color: #96D9D6;
+}
+
+#modal-bug {
+    background-color: #A6B91A;
+}
+
+#modal-ghost {
+    background-color: #735797;
+}
+
+#modal-steel {
+    background-color: #B7B7CE;
+}
+
+#modal-dragon {
+    background-color: #6F35FC;
+}
+
+#modal-dark {
+    background-color: #705746;
+}
+
+#modal-fairy {
+    background-color: #D685AD;
+}
+
+#abilities {
+    border-radius: 10px;
+    width: 90%;
+}
+
+#abilities-normal {
+    background-color: #A8A77A;
+}
+
+#abilities-fire {
+    background-color: #EE8130;
+}
+
+#abilities-water {
+    background-color: #6390F0;
+}
+
+#abilities-grass {
+    background-color: #9ed180;
+}
+
+#abilities-flying {
+    background-color: #A98FF3;
+}
+
+#abilities-fighting {
+    background-color: #C22E28;
+}
+
+#abilities-poison {
+    background-color: #A33EA1;
+}
+
+#abilities-electric {
+    background-color: #F7D02C;
+}
+
+#abilities-ground {
+    background-color: #E2BF65;
+}
+
+#abilities-rock {
+    background-color: #B6A136;
+}
+
+#abilities-psychic {
+    background-color: #F95587;
+}
+
+#abilities-ice {
+    background-color: #96D9D6;
+}
+
+#abilities-bug {
+    background-color: #A6B91A;
+}
+
+#abilities-ghost {
+    background-color: #735797;
+}
+
+#abilities-steel {
+    background-color: #B7B7CE;
+}
+
+#abilities-dragon {
+    background-color: #6F35FC;
+}
+
+#modal-dark {
+    background-color: #705746;
+}
+
+#modal-fairy {
+    background-color: #D685AD;
+}
