@@ -30,6 +30,7 @@ var Vue = new Vue({
         //DATA
         opp: null,
         pokedexLoading: false,
+        error: null,
 
         //REGION
         regions: ['kanto', 'updated-johto', 'hoenn', 'extended-sinnoh', 'updated-unova', 'kalos-central', 'updated-alola', 'galar'],
@@ -54,6 +55,7 @@ var Vue = new Vue({
             await $.ajax({
                 url: Vue.url,
                 success: function(pokemon) {
+                    console.log(pokemon);
                     Vue.pokemons = pokemon.pokemon_entries;
                     Vue.maxPages = Vue.pokemons.length;
                 },
@@ -99,50 +101,45 @@ var Vue = new Vue({
         },
         searchPokemon() {
             let self = this;
-            if (Vue.filter == 'none') {
-                pokemonUrl = 'https://pokeapi.co/api/v2/pokemon/' + Vue.pokemonName;
-            }
+            pokemonUrl = 'https://pokeapi.co/api/v2/pokemon/' + Vue.pokemonName;
 
             $.ajax({
                 url: pokemonUrl,
                 success: function(pokemon) {
                     Vue.pokemon = pokemon;
-                    if (Vue.filter == 'region') {
-                        self.randomQuote();
-                    } else {
-                        self.replaceStatNames()
-                    }
+                    self.replaceStatNames()
 
                     $('#pokedex-entry-modal').modal('show');
 
                 },
-                error: function() {
+                error: function(error) {
                     Vue.pokedexLoading = false;
-                    Vue.error = "Deze plaats bestaat niet!";
+                    Vue.error = error;
                 }
             })
+        },
+        setMaxOnPage(result) {
+            Vue.maxOnPage = result;
+            Vue.offset = 0;
+            Vue.limit = result;
         },
 
 
 
 
         //MODAL
-        showPokemon(pokemonUrl) {
+        showPokemon(pokemonId) {
             let self = this;
-            if (Vue.filter == 'none') {
-                pokemonUrl = 'https://pokeapi.co/api/v2/pokemon/' + pokemonUrl;
-            }
+            pokemonUrl = 'https://pokeapi.co/api/v2/pokemon/' + Vue.pokemons[pokemonId - 1].pokemon_species.name;
 
             $.ajax({
                 url: pokemonUrl,
                 success: function(pokemon) {
                     Vue.pokemon = pokemon;
-                    if (Vue.filter == 'region') {
-                        self.randomQuote();
-                    } else {
-                        self.replaceStatNames()
-                    }
+                    Vue.pokemon.entry_number = pokemonId;
+                    self.replaceStatNames()
 
+                    console.log(pokemon)
                     $('#pokedex-entry-modal').modal('show');
 
                 },
@@ -166,18 +163,16 @@ var Vue = new Vue({
             quoteIndex = Math.floor(Math.random() * quotes.length);
             Vue.quote = quotes[quoteIndex].flavor_text;
         },
-        previousPokemon(pokemon) {
+        previousPokemon(pokemonId) {
             let self = this;
             $.ajax({
-                url: 'https://pokeapi.co/api/v2/pokemon/' + (pokemon.id - 1),
+                url: 'https://pokeapi.co/api/v2/pokemon/' + Vue.pokemons[pokemonId - 2].pokemon_species.name,
                 success: function(pokemon) {
+                    console.log(pokemon);
                     Vue.pokemon = pokemon;
+                    Vue.pokemon.entry_number = pokemonId - 1;
+                    self.replaceStatNames()
 
-                    if (Vue.filter == 'region') {
-                        self.randomQuote();
-                    } else {
-                        self.replaceStatNames()
-                    }
                     if (pokemon.id == Vue.offset) {
                         Vue.previousPage();
                     }
@@ -188,18 +183,16 @@ var Vue = new Vue({
                 }
             })
         },
-        nextPokemon(pokemon) {
+        nextPokemon(pokemonId) {
             let self = this;
             $.ajax({
-                url: 'https://pokeapi.co/api/v2/pokemon/' + (pokemon.id + 1),
+                url: 'https://pokeapi.co/api/v2/pokemon/' + Vue.pokemons[pokemonId].pokemon_species.name,
                 success: function(pokemon) {
+                    console.log(pokemon);
                     Vue.pokemon = pokemon;
+                    Vue.pokemon.entry_number = pokemonId + 1;
+                    self.replaceStatNames()
 
-                    if (Vue.filter == 'region') {
-                        self.randomQuote();
-                    } else {
-                        self.replaceStatNames()
-                    }
                     if (pokemon.id > Vue.limit) {
                         Vue.nextPage();
                     }
@@ -277,6 +270,7 @@ var Vue = new Vue({
             await $.ajax({
                 url: Vue.url,
                 success: function(region) {
+                    console.log(region);
                     Vue.pokemons = region.pokemon_entries;
                     Vue.regionData = region;
                     Vue.opp = '0'
