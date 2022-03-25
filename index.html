@@ -20,6 +20,7 @@
 <body>
     <div id="pokedex-app">
 
+        {{ offset }} {{ limit }} {{ maxOnPage }}
         <!-- HEADER -->
         <nav class="navbar navbar-light bg-light">
             <div class="d-flex justify-content-between text-center align-items-center">
@@ -59,7 +60,7 @@
                 <div class="pokemon-content" v-if="filter == 'none'">
                     <div class="pokemon-list w-75">
                         <div v-for="(pokemon, index) in pokemons" v-bind:key="index">
-                            <div id="limit-offset" v-if="index < offset && index >= limit">
+                            <div id="limit-offset" v-if="index < limit && index >= offset">
                                 <div @click="showPokemon(pokemon.entry_number)" class="pokemon">
                                     <img class="pokemon-image-pokedex" :src='"https://raw.githubusercontent.com/msikma/pokesprite/master/pokemon-gen8/regular/" + pokemon.pokemon_species.name + ".png"' />
                                     <p>#{{ pokemon.entry_number }} {{ pokemon.pokemon_species.name }}</p>
@@ -76,7 +77,7 @@
                     </div>
                     <div class="pokemon-list w-75">
                         <div v-for="(pokemon, index) in pokemons" v-bind:key="index">
-                            <div id="limit-offset" v-if="index < offset && index >= limit ">
+                            <div id="limit-offset" v-if="index < limit && index >= offset ">
                                 <div @click="showPokemon(pokemon.entry_number)" class="pokemon">
                                     <img class="pokemon-image-pokedex" :src='"https://raw.githubusercontent.com/msikma/pokesprite/master/pokemon-gen8/regular/" + pokemon.pokemon.name + ".png"' />
                                     <p>{{ pokemon.pokemon.name }}</p>
@@ -128,21 +129,23 @@
         </div>
 
         <!-- POKEMON MODALS -->
-        <div class="modal fade" id="pokedex-entry-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div v-if="pokemon != ''" class="modal fade" id="pokedex-entry-modal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered d-flex flex-column justify-content-center" role="document">
                 <div id="pokemon-nav" class="modal-content mb-2">
                     <div class="d-flex justify-content-between m-2">
                         <div v-if="pokemon.id-1 != 0">
                             <span @click="previousPokemon(pokemon.entry_number)" class="btn btn-secondary"><- Previous</span>
-                            <img class="img-browser" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + (pokemon.entry_number - 1) + '.png'" />
-                            <span>#{{ (pokemon.id - 2) }}</span>
+                            <img class="img-browser" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + (pokemons[pokemon.entry_number].id - 2) + '.png'" />
+                            <span>#{{ pokemons[pokemon.entry_number - 2].id }}</span>
+                            <span>{{ pokemons[pokemon.entry_number - 2].pokemon_species.name }}</span>
                         </div>
                         <div v-else class="align-self-center">
                             <button class="btn btn-secondary" disabled><- Previous</button>
                         </div>
                         <div v-if="pokemon.id != pokemons.length">
-                            <span>#{{ pokemons[pokemon.entry_number].pokemon_species.id }}</span>
-                            <img class="img-browser" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + (pokemon.entry_number + 1) + '.png'" />
+                            <span>{{ pokemons[pokemon.entry_number].pokemon_species.name }}</span>
+                            <span>#{{ pokemons[pokemon.entry_number].id }}</span>
+                            <img class="img-browser" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + pokemons[pokemon.entry_number].id + '.png'" />
                             <span @click="nextPokemon(pokemon.entry_number)" class="btn btn-secondary">Next -></span>
                         </div>
                         <div v-else class="align-self-center">

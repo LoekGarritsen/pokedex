@@ -55,7 +55,6 @@ var Vue = new Vue({
             await $.ajax({
                 url: Vue.url,
                 success: function(pokemon) {
-                    console.log(pokemon);
                     Vue.pokemons = pokemon.pokemon_entries;
                     Vue.maxPages = Vue.pokemons.length;
                 },
@@ -158,11 +157,6 @@ var Vue = new Vue({
                 Vue.moves = 'closed';
             }
         },
-        randomQuote() {
-            let quotes = Vue.pokemon.flavor_text_entries.filter((quote) => quote.language.name == 'en');
-            quoteIndex = Math.floor(Math.random() * quotes.length);
-            Vue.quote = quotes[quoteIndex].flavor_text;
-        },
         previousPokemon(pokemonId) {
             let self = this;
             $.ajax({
@@ -235,31 +229,6 @@ var Vue = new Vue({
 
 
 
-        //TYPES
-        async selectType(type) {
-            let self = this;
-            Vue.pokedexLoading = true;
-            self.fixData('type');
-            Vue.url = 'https://pokeapi.co/api/v2/type/' + type;
-
-            await $.ajax({
-                url: Vue.url,
-                success: function(type) {
-                    Vue.pokemons = type.pokemon;
-                    Vue.typeData = type;
-                    Vue.maxPages = Vue.pokemons.length;
-                },
-                error: function() {
-                    Vue.pokedexLoading = false;
-                    Vue.error = "error";
-                }
-            })
-            Vue.pokedexLoading = false;
-        },
-
-
-
-
         //REGION
         async selectRegion(region) {
             let self = this;
@@ -273,9 +242,8 @@ var Vue = new Vue({
                     console.log(region);
                     Vue.pokemons = region.pokemon_entries;
                     Vue.regionData = region;
-                    Vue.opp = '0'
-                    Vue.maxPages = Vue.pokemons.length;
-                    self.filterDiscription();
+                    Vue.opp = '0';
+                    self.replaceStatNames();
                 },
                 error: function() {
                     Vue.pokedexLoading = false;
@@ -283,10 +251,6 @@ var Vue = new Vue({
                 }
             })
             Vue.pokedexLoading = false;
-        },
-        filterDiscription() {
-            let description = Vue.regionData.descriptions.filter((description) => description.language.name == 'en');
-            Vue.regionDescription = description[0].description;
         },
     }
 })
