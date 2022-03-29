@@ -19,8 +19,6 @@
 
 <body>
     <div id="pokedex-app">
-
-        {{ offset }} {{ limit }} {{ maxOnPage }}
         <!-- HEADER -->
         <nav class="navbar navbar-light bg-light">
             <div class="d-flex justify-content-between text-center align-items-center">
@@ -57,7 +55,11 @@
             <div id="pokedex">
 
                 <!-- NO FILTER -->
-                <div class="pokemon-content" v-if="filter == 'none'">
+                <div class="pokemon-content" v-if="filter == 'none' || filter == 'region'">
+                    <div v-if="filter == 'region'" class="info-card w-25">
+                        Regio: {{ regionData.name }}. <br/> Discription: {{ regionDescription }}. <br/> Active Games:
+                        <span v-for="(game, index) in regionData.version_groups" v-bind:key="index"> {{ game.name }}, </span> <br> Seen in Anime: {{ regionData.is_main_series }}. <br/>
+                    </div>
                     <div class="pokemon-list w-75">
                         <div v-for="(pokemon, index) in pokemons" v-bind:key="index">
                             <div id="limit-offset" v-if="index < limit && index >= offset">
@@ -81,24 +83,6 @@
                                 <div @click="showPokemon(pokemon.entry_number)" class="pokemon">
                                     <img class="pokemon-image-pokedex" :src='"https://raw.githubusercontent.com/msikma/pokesprite/master/pokemon-gen8/regular/" + pokemon.pokemon.name + ".png"' />
                                     <p>{{ pokemon.pokemon.name }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- REGION -->
-                <div class="pokemon-content" v-if="filter == 'region'">
-                    <div class="info-card w-25">
-                        Regio: {{ regionData.name }}. <br/> Discription: {{ regionDescription }}. <br/> Active Games:
-                        <span v-for="(game, index) in regionData.version_groups" v-bind:key="index"> {{ game.name }}, </span> <br> Seen in Anime: {{ regionData.is_main_series }}. <br/>
-                    </div>
-                    <div class="pokemon-list w-75">
-                        <div v-for="(pokemon, index) in pokemons" v-bind:key="index">
-                            <div id="limit-offset" v-if="index < offset && index >= limit ">
-                                <div @click="showPokemon(pokemon.entry_number)" class="pokemon">
-                                    <img class="pokemon-image-pokedex" :src='"https://raw.githubusercontent.com/msikma/pokesprite/master/pokemon-gen8/regular/" + pokemon.pokemon_species.name + ".png"' />
-                                    <p> #{{ pokemon.entry_number }}. {{ pokemon.pokemon_species.name }}</p>
                                 </div>
                             </div>
                         </div>
@@ -135,17 +119,17 @@
                     <div class="d-flex justify-content-between m-2">
                         <div v-if="pokemon.id-1 != 0">
                             <span @click="previousPokemon(pokemon.entry_number)" class="btn btn-secondary"><- Previous</span>
-                            <img class="img-browser" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + (pokemons[pokemon.entry_number].id - 2) + '.png'" />
-                            <span>#{{ pokemons[pokemon.entry_number - 2].id }}</span>
-                            <span>{{ pokemons[pokemon.entry_number - 2].pokemon_species.name }}</span>
+                            <img class="img-browser" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + 1 + '.png'" />
+                            <span>#</span>
+                            <span></span>
                         </div>
                         <div v-else class="align-self-center">
                             <button class="btn btn-secondary" disabled><- Previous</button>
                         </div>
                         <div v-if="pokemon.id != pokemons.length">
-                            <span>{{ pokemons[pokemon.entry_number].pokemon_species.name }}</span>
-                            <span>#{{ pokemons[pokemon.entry_number].id }}</span>
-                            <img class="img-browser" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + pokemons[pokemon.entry_number].id + '.png'" />
+                            <span></span>
+                            <span>#</span>
+                            <img class="img-browser" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + 1 + '.png'" />
                             <span @click="nextPokemon(pokemon.entry_number)" class="btn btn-secondary">Next -></span>
                         </div>
                         <div v-else class="align-self-center">

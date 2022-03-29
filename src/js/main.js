@@ -87,8 +87,8 @@ var Vue = new Vue({
             Vue.typeData = '';
             Vue.regionData = '';
             Vue.typeData = '';
-            Vue.limit = 0;
-            Vue.offset = Vue.maxOnPage;
+            Vue.limit = Vue.maxOnPage;
+            Vue.offset = 0;
         },
         replaceStatNames() {
             i = 0;
@@ -167,7 +167,7 @@ var Vue = new Vue({
                     Vue.pokemon.entry_number = pokemonId - 1;
                     self.replaceStatNames()
 
-                    if (pokemon.id == Vue.offset) {
+                    if (pokemon.entry_number == Vue.offset) {
                         Vue.previousPage();
                     }
                 },
@@ -187,7 +187,7 @@ var Vue = new Vue({
                     Vue.pokemon.entry_number = pokemonId + 1;
                     self.replaceStatNames()
 
-                    if (pokemon.id > Vue.limit) {
+                    if (pokemon.entry_number > Vue.limit) {
                         Vue.nextPage();
                     }
 
@@ -242,8 +242,6 @@ var Vue = new Vue({
                     console.log(region);
                     Vue.pokemons = region.pokemon_entries;
                     Vue.regionData = region;
-                    Vue.opp = '0';
-                    self.replaceStatNames();
                 },
                 error: function() {
                     Vue.pokedexLoading = false;
