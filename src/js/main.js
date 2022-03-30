@@ -20,6 +20,7 @@ var Vue = new Vue({
         pokemonName: null,
         nextPokemonId: null,
         previousPokemonId: null,
+        evolution: [],
 
         //PAGE
         filter: 'none',
@@ -35,8 +36,7 @@ var Vue = new Vue({
         error: null,
 
         //REGION
-        regions: ['kanto', 'updated-johto', 'hoenn', 'extended-sinnoh', 'updated-unova', 'kalos-central', 'updated-alola', 'galar'],
-        regionData: null,
+        regions: ['kanto', 'updated-johto', 'hoenn', 'extended-sinnoh', 'original-unova', 'kalos-central', 'updated-alola', 'galar'],
         regionData: [],
         regionDescription: '',
 
@@ -62,7 +62,7 @@ var Vue = new Vue({
                 },
                 error: function() {
                     Vue.pokedexLoading = false;
-                    Vue.error = "Error";
+                    Vue.error = "Kan pokemon niet laten zien!";
                 }
             })
             Vue.pokedexLoading = false;
@@ -87,8 +87,6 @@ var Vue = new Vue({
             Vue.filter = filter;
             Vue.regionData = '';
             Vue.typeData = '';
-            Vue.regionData = '';
-            Vue.typeData = '';
             Vue.limit = Vue.maxOnPage;
             Vue.offset = 0;
         },
@@ -108,14 +106,18 @@ var Vue = new Vue({
                 url: pokemonUrl,
                 success: function(pokemon) {
                     Vue.pokemon = pokemon;
-                    self.replaceStatNames();
+                    Vue.pokemon.entry_number = Vue.pokemon.id;
+                    self.replaceStatNames()
+
+                    Vue.nextPokemonId = self.spliceUrl(Vue.pokemons[Vue.pokemon.entry_number].pokemon_species.url);
+                    Vue.previousPokemonId = self.spliceUrl(Vue.pokemons[Vue.pokemon.entry_number - 2].pokemon_species.url);
 
                     $('#pokedex-entry-modal').modal('show');
 
                 },
-                error: function(error) {
+                error: function() {
                     Vue.pokedexLoading = false;
-                    Vue.error = error;
+                    Vue.error = "Deze pokemon bestaat niet!";
                 }
             })
         },
@@ -158,18 +160,12 @@ var Vue = new Vue({
                 },
                 error: function() {
                     Vue.pokedexLoading = false;
-                    Vue.error = "Deze plaats bestaat niet!";
+                    Vue.error = "Kan pokemon niet laten zien!";
                 }
             })
         },
         showMoves() {
-            if (Vue.moves == 'closed') {
-                $('#collapseOne').addClass('show');
-                Vue.moves = 'open';
-            } else {
-                $('#collapseOne').removeClass('show');
-                Vue.moves = 'closed';
-            }
+            $('#pokedex-moves-modal').modal('show');
         },
         previousPokemon(pokemonId) {
             let self = this;
@@ -190,7 +186,7 @@ var Vue = new Vue({
                 },
                 error: function() {
                     Vue.pokedexLoading = false;
-                    Vue.error = "Deze plaats bestaat niet!";
+                    Vue.error = "Kan niet naar deze Pokemon!";
                 }
             })
         },
@@ -214,7 +210,7 @@ var Vue = new Vue({
                 },
                 error: function() {
                     Vue.pokedexLoading = false;
-                    Vue.error = "Deze plaats bestaat niet!";
+                    Vue.error = "Kan niet naar deze Pokemon!";
                 }
             })
         },
@@ -246,9 +242,6 @@ var Vue = new Vue({
             Vue.pokedexLoading = false;
         },
 
-
-
-
         //REGION
         async selectRegion(region) {
             let self = this;
@@ -257,16 +250,23 @@ var Vue = new Vue({
             Vue.url = 'https://pokeapi.co/api/v2/pokedex/' + region;
             await $.ajax({
                 url: Vue.url,
-                success: function(pokemon) {
-                    Vue.pokemons = pokemon.pokemon_entries;
+                success: function(region) {
+                    console.log(region);
+                    Vue.regionData = region;
+                    Vue.pokemons = region.pokemon_entries;
                     Vue.maxPages = Vue.pokemons.length;
+                    self.setRegionDescription(region.descriptions);
                 },
                 error: function() {
                     Vue.pokedexLoading = false;
-                    Vue.error = "Error";
+                    Vue.error = "Kan regio niet vinden!";
                 }
             })
             Vue.pokedexLoading = false;
         },
+        setRegionDescription(descriptions) {
+            description = descriptions.filter((descriptions) => descriptions.language.name == "en");
+            Vue.regionDescription = description[0].description;
+        }
     }
 })

@@ -37,7 +37,7 @@
                     </a>
                 </div>
                 <div class="col-3">
-                    <div class="form-inline d-flex">
+                    <div v-if="filter== 'none'" class="form-inline d-flex">
                         <div class="col-9">
                             <input class="form-control col-9" v-model="pokemonName" v-on:keyup.enter="searchPokemon()" placeholder="Search">
                         </div>
@@ -54,11 +54,27 @@
         <div v-if="!pokedexLoading">
             <div id="pokedex">
 
+                <div v-if="error" class="alert alert-danger text-center" role="alert">
+                    {{ error }}
+                    <span style="cursor:pointer;" @click="error = null;">&#10006;</span>
+                </div>
+
                 <!-- NO FILTER -->
                 <div class="pokemon-content" v-if="filter == 'none' || filter == 'region'">
                     <div v-if="filter == 'region'" class="info-card w-25">
-                        Regio: {{ regionData.name }}. <br/> Discription: {{ regionDescription }}. <br/> Active Games:
-                        <span v-for="(game, index) in regionData.version_groups" v-bind:key="index"> {{ game.name }}, </span> <br> Seen in Anime: {{ regionData.is_main_series }}. <br/>
+                        <div class="m-2">
+                            <strong>Regio:</strong> <br/> {{ regionData.name }}.
+                        </div>
+                        <div class="m-2">
+                            <strong>Discription:</strong> <br/> {{ regionDescription }}.
+                        </div>
+                        <div class="m-2">
+                            <strong>Active Games:</strong> <br/> <span v-for="(game, index) in regionData.version_groups" v-bind:key="index"> {{ game.name }}, </span>
+                        </div>
+                        <div class="m-2">
+                            <strong>Seen in Anime:</strong> {{ regionData.is_main_series }}.
+                        </div>
+
                     </div>
                     <div class="pokemon-list w-75">
                         <div v-for="(pokemon, index) in pokemons" v-bind:key="index">
@@ -71,23 +87,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- TYPE
-                <div class="pokemon-content" v-if="filter == 'type'">
-                    <div class="info-card w-25">
-                        {{ typeData.name }}
-                    </div>
-                    <div class="pokemon-list w-75">
-                        <div v-for="(pokemon, index) in pokemons" v-bind:key="index">
-                            <div id="limit-offset" v-if="index < limit && index >= offset ">
-                                <div @click="showPokemon(pokemon.entry_number)" class="pokemon">
-                                    <img class="pokemon-image-pokedex" :src='"https://raw.githubusercontent.com/msikma/pokesprite/master/pokemon-gen8/regular/" + pokemon.pokemon.name + ".png"' />
-                                    <p>{{ pokemon.pokemon.name }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
             </div>
 
             <div v-if="pokemons" id="browser">
@@ -115,16 +114,16 @@
             <div class="modal-dialog modal-dialog-centered d-flex flex-column justify-content-center" role="document">
                 <div id="pokemon-nav" class="modal-content mb-2">
                     <div class="d-flex justify-content-between m-2">
-                        <div v-if="pokemon.id-1 != 0">
+                        <div v-if="pokemon.entry_number-1 != 0">
                             <span @click="previousPokemon(pokemon.entry_number)" class="btn btn-secondary"><- Previous</span>
                             <img class="img-browser" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + previousPokemonId + '.png'" />
                             <span>#{{ previousPokemonId }}</span>
-                            <span>{{ pokemons[pokemon.entry_number - 2].pokemon_species.name }}</span>
+                            <span>{{ pokemons[pokemon.entry_number-2].pokemon_species.name }}</span>
                         </div>
                         <div v-else class="align-self-center">
                             <button class="btn btn-secondary" disabled><- Previous</button>
                         </div>
-                        <div v-if="pokemon.id != pokemons.length">
+                        <div v-if="pokemon.entry_number != pokemons.length">
                             <span>{{ pokemons[pokemon.entry_number].pokemon_species.name }}</span>
                             <span>#{{ nextPokemonId }}</span>
                             <img class="img-browser" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + nextPokemonId + '.png'" />
@@ -144,7 +143,7 @@
                                         <td class="td-stat" style="width: 200px">
                                             {{ stat.stat.name }}:
                                         </td>
-                                        <td class="td-stat" style="width: 100px">
+                                        <td class="td-stat" style="width: 100pxp">
                                             {{ stat.base_stat }}
                                         </td>
                                         <td class="td-stat" style="width: 255px; border: 1px solid #0000;">
@@ -196,9 +195,9 @@
                                         </div>
                                     </div>
                                     <div :id="'abilities abilities-' + pokemonFirstType()">
-                                        <div>abilities:</div>
+                                        abilities:
                                         <span v-for="(ability, index) in pokemon.abilities" v-bind:key="index">
-                                            {{ ability.ability.name }},
+                                            {{ ability.ability.name }}
                                         </span>
                                     </div>
                                     <div class="card">
@@ -210,12 +209,14 @@
                                             </h5>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div id="collapseOne" class="collapse card">
-                                <div class="card-body d-flex flex-wrap">
-                                    <div v-for="(move, index) in pokemon.moves" class="card card-body w-25">
-                                        {{ move.move.name }}
+                                    <div class="card">
+                                        <div class="card-header" id="headingOne">
+                                            <h5 class="mb-0">
+                                                <button disabled class="btn btn-link">
+                                                Evoluties
+                                            </button>
+                                            </h5>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -225,23 +226,32 @@
             </div>
         </div>
 
-        <!-- ERROR -->
-        <div class="modal fade" id="errorModal" role="dialog">
-            <div class="modal-dialog">
+        <div class="modal fade" id="pokedex-evolutions-modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Error</h4>
-                    </div>
                     <div class="modal-body">
-                        <p id="error">{{ error }}</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Evoluties</h5>
+                        {{ evolution }}
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="pokedex-moves-modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Moves</h5>
+                        <div class="card-body d-flex flex-wrap">
+                            <div v-for="(move, index) in pokemon.moves" class="card card-body w-25">
+                                {{ move.move.name }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <!-- NAV -->
         <div class="offcanvas offcanvas-start scroll-y" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
@@ -271,24 +281,11 @@
                             </section>
                             <!-- Section: Condition -->
                         </section>
-                        <!-- Section: Condition -->
-                        <section class="mb-4" data-filter="condition">
-                            <h6 class="font-weight-bold mb-3">Types</h6>
-
-                            <div class="form-check mb-3" v-for="(type, index) in types" v-bind:key="index">
-                                <label v-if="type != typeData.name" @click="selectType(type)" class="filter-title form-check-label text-uppercase small text-muted" for="condition-checkbox">
-                                {{ type }}
-                            </label>
-                                <label v-if="type == typeData.name" class="filter-title form-check-label text-uppercase small text-muted" for="condition-checkbox">
-                                {{ type }} ✔️
-                            </label>
-                        </section>
-                        <!-- Section: Condition -->
                     </section>
-                    </div>
                 </div>
             </div>
         </div>
+    </div>
 </body>
 
 <script type="text/javascript" src="./src/js/main.js"></script>
