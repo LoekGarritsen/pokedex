@@ -72,7 +72,7 @@
                     </div>
                 </div>
 
-                <!-- TYPE -->
+                <!-- TYPE
                 <div class="pokemon-content" v-if="filter == 'type'">
                     <div class="info-card w-25">
                         {{ typeData.name }}
@@ -87,12 +87,11 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
 
             <div v-if="pokemons" id="browser">
-                <button v-if="limit > 0" @click="previousPage()" class="btn btn-secondary"><- Previous</button>
-                <button v-else class="btn btn-secondary" disabled><- Previous</button>
+                <button :disabled="offset == 0" @click="previousPage()" class="btn btn-secondary"><- Previous</button>
 
                 <div class="dropdown">
                     <a class="btn btn-secondary dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
@@ -100,15 +99,14 @@
                     </a>
 
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <li><a class="dropdown-item" @click="setMaxOnPage(20)">20</a></li>
-                        <li><a class="dropdown-item" @click="setMaxOnPage(30)">30</a></li>
-                        <li><a class="dropdown-item" @click="setMaxOnPage(50)">50</a></li>
-                        <li><a class="dropdown-item" @click="setMaxOnPage(75)">75</a></li>
+                        <li><button :disabled="maxOnPage == 20" class="dropdown-item" @click="setMaxOnPage(20)">20</button></li>
+                        <li><button :disabled="maxOnPage == 30" class="dropdown-item" @click="setMaxOnPage(30)">30</button></li>
+                        <li><button :disabled="maxOnPage == 50" class="dropdown-item" @click="setMaxOnPage(50)">50</button></li>
+                        <li><button :disabled="maxOnPage == 75" class="dropdown-item" @click="setMaxOnPage(75)">75</button></li>
                     </ul>
                 </div>
 
-                <button v-if="offset < maxPages" @click="nextPage()" class="btn btn-secondary">Next -></button>
-                <button v-else class="btn btn-secondary" disabled>Next -></button>
+                <button :disabled="limit > maxPages" @click="nextPage()" class="btn btn-secondary">Next -></button>
             </div>
         </div>
 
@@ -119,17 +117,17 @@
                     <div class="d-flex justify-content-between m-2">
                         <div v-if="pokemon.id-1 != 0">
                             <span @click="previousPokemon(pokemon.entry_number)" class="btn btn-secondary"><- Previous</span>
-                            <img class="img-browser" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + 1 + '.png'" />
-                            <span>#</span>
-                            <span></span>
+                            <img class="img-browser" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + previousPokemonId + '.png'" />
+                            <span>#{{ previousPokemonId }}</span>
+                            <span>{{ pokemons[pokemon.entry_number - 2].pokemon_species.name }}</span>
                         </div>
                         <div v-else class="align-self-center">
                             <button class="btn btn-secondary" disabled><- Previous</button>
                         </div>
                         <div v-if="pokemon.id != pokemons.length">
-                            <span></span>
-                            <span>#</span>
-                            <img class="img-browser" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + 1 + '.png'" />
+                            <span>{{ pokemons[pokemon.entry_number].pokemon_species.name }}</span>
+                            <span>#{{ nextPokemonId }}</span>
+                            <img class="img-browser" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + nextPokemonId + '.png'" />
                             <span @click="nextPokemon(pokemon.entry_number)" class="btn btn-secondary">Next -></span>
                         </div>
                         <div v-else class="align-self-center">
@@ -198,9 +196,9 @@
                                         </div>
                                     </div>
                                     <div :id="'abilities abilities-' + pokemonFirstType()">
-                                        abilities:
+                                        <div>abilities:</div>
                                         <span v-for="(ability, index) in pokemon.abilities" v-bind:key="index">
-                                            {{ ability.ability.name }}
+                                            {{ ability.ability.name }},
                                         </span>
                                     </div>
                                     <div class="card">

@@ -18,6 +18,8 @@ var Vue = new Vue({
         moves: 'closed',
         quote: '',
         pokemonName: null,
+        nextPokemonId: null,
+        previousPokemonId: null,
 
         //PAGE
         filter: 'none',
@@ -106,7 +108,7 @@ var Vue = new Vue({
                 url: pokemonUrl,
                 success: function(pokemon) {
                     Vue.pokemon = pokemon;
-                    self.replaceStatNames()
+                    self.replaceStatNames();
 
                     $('#pokedex-entry-modal').modal('show');
 
@@ -122,6 +124,9 @@ var Vue = new Vue({
             Vue.offset = 0;
             Vue.limit = result;
         },
+        spliceUrl(pokemonUrl) {
+            return pokemonUrl.split('/')[6];
+        },
 
 
 
@@ -129,6 +134,7 @@ var Vue = new Vue({
         //MODAL
         showPokemon(pokemonId) {
             let self = this;
+            console.log(pokemonId);
             pokemonUrl = 'https://pokeapi.co/api/v2/pokemon/' + Vue.pokemons[pokemonId - 1].pokemon_species.name;
 
             $.ajax({
@@ -136,7 +142,15 @@ var Vue = new Vue({
                 success: function(pokemon) {
                     Vue.pokemon = pokemon;
                     Vue.pokemon.entry_number = pokemonId;
-                    self.replaceStatNames()
+
+                    self.replaceStatNames();
+
+                    if (Vue.pokemon.entry_number < Vue.pokemons.length) {
+                        Vue.nextPokemonId = self.spliceUrl(Vue.pokemons[Vue.pokemon.entry_number].pokemon_species.url);
+                    }
+                    if (Vue.pokemon.entry_number - 2 > 0) {
+                        Vue.previousPokemonId = self.spliceUrl(Vue.pokemons[Vue.pokemon.entry_number - 2].pokemon_species.url);
+                    }
 
                     console.log(pokemon)
                     $('#pokedex-entry-modal').modal('show');
@@ -167,6 +181,9 @@ var Vue = new Vue({
                     Vue.pokemon.entry_number = pokemonId - 1;
                     self.replaceStatNames()
 
+                    Vue.nextPokemonId = self.spliceUrl(Vue.pokemons[Vue.pokemon.entry_number].pokemon_species.url);
+                    Vue.previousPokemonId = self.spliceUrl(Vue.pokemons[Vue.pokemon.entry_number - 2].pokemon_species.url);
+
                     if (pokemon.entry_number == Vue.offset) {
                         Vue.previousPage();
                     }
@@ -186,6 +203,9 @@ var Vue = new Vue({
                     Vue.pokemon = pokemon;
                     Vue.pokemon.entry_number = pokemonId + 1;
                     self.replaceStatNames()
+
+                    Vue.nextPokemonId = self.spliceUrl(Vue.pokemons[Vue.pokemon.entry_number].pokemon_species.url);
+                    Vue.previousPokemonId = self.spliceUrl(Vue.pokemons[Vue.pokemon.entry_number - 2].pokemon_species.url);
 
                     if (pokemon.entry_number > Vue.limit) {
                         Vue.nextPage();
@@ -235,17 +255,15 @@ var Vue = new Vue({
             Vue.pokedexLoading = true;
             self.fixData('region');
             Vue.url = 'https://pokeapi.co/api/v2/pokedex/' + region;
-
             await $.ajax({
                 url: Vue.url,
-                success: function(region) {
-                    console.log(region);
-                    Vue.pokemons = region.pokemon_entries;
-                    Vue.regionData = region;
+                success: function(pokemon) {
+                    Vue.pokemons = pokemon.pokemon_entries;
+                    Vue.maxPages = Vue.pokemons.length;
                 },
                 error: function() {
                     Vue.pokedexLoading = false;
-                    Vue.error = "error";
+                    Vue.error = "Error";
                 }
             })
             Vue.pokedexLoading = false;
