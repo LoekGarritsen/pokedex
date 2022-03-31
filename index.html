@@ -231,7 +231,7 @@
                 <div class="modal-content">
                     <div class="modal-body">
                         <h5 class="modal-title" id="exampleModalLongTitle">Evoluties</h5>
-                        {{ evolution }}
+                        evoluties
                     </div>
                 </div>
             </div>
@@ -266,7 +266,7 @@
                             <!-- Section: Condition -->
                             <section class="mb-4" data-filter="condition">
                                 <h6 v-if="filter == 'none'" class="font-weight-bold mb-3 filter-title">No filter ✔️</h6>
-                                <h6 v-else class="font-weight-bold mb-3 filter-title" @click="noFilter()">No filter</h6>
+                                <h6 v-else class="font-weight-bold mb-3 filter-title" @click="getAllPokemon()">No filter</h6>
 
                                 <h6 class="font-weight-bold mb-3">Regions</h6>
 
